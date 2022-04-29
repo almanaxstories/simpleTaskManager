@@ -5,7 +5,11 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "lint-check": "eslint ./src/index.js",
+    "lint-fix": "eslint --fix ./src/index.js",
+    "pretty-check": "prettier --check ./src/index.js",
+    "pretty-fix": "prettier --write ./src/index.js"
   },
   "keywords": [],
   "author": "",
