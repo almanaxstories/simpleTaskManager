@@ -1,4 +1,5 @@
 // import _ from 'lodash';
+import './style.css';
 
 window.onload = () => {
     const taskManagerMainDiv = document.getElementById('container')
