@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack serve --open",
     "build": "webpack",
     "lint-check": "eslint ./src/index.js",
     "lint-fix": "eslint --fix ./src/index.js",
