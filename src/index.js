@@ -10,6 +10,7 @@ function createElement(tagName, type, id, value, textContent, parent) {
     element.value = value;
     element.textContent = textContent;
     parent.appendChild(element);
+    return element;
 }
 
 const appContainer = document.getElementById('container');
@@ -92,7 +93,7 @@ window.addEventListener('load', () => {
             return true;
         }
 
-        for (let a = 0; a < inputField.value; a += 1) {
+        for (let a = 0; a < inputField.value.length; a += 1) {
             if (inputField.value.charCodeAt(a) !== 32) {
                 return false;
             }
