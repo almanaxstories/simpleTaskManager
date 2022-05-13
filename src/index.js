@@ -1,159 +1,130 @@
 // import _ from 'lodash';
-import './style.css'
+import './style.css';
 
-window.onload = () => {
-    const taskManagerMainDiv = document.getElementById('container')
+// Render of HTML
 
-    function createDiv(divStyle) {
-        const thisDiv = document.createElement('div')
-        if (divStyle) {
-            thisDiv.style = divStyle
+function createElement(tagName, type, id, value, textContent, parent) {
+    const element = document.createElement(tagName);
+    element.type = type;
+    element.id = id;
+    element.value = value;
+    element.textContent = textContent;
+    parent.appendChild(element);
+}
+
+const appContainer = document.getElementById('container');
+
+createElement(
+    'h3',
+    '',
+    '',
+    '',
+    'Hi user, this is your task manager. Print tasks in the field below one by one',
+    appContainer
+);
+
+const inputField = createElement(
+    'input',
+    'text',
+    'inputField',
+    '',
+    '',
+    appContainer
+);
+
+const addTaskButton = createElement(
+    'input',
+    'button',
+    'addTask',
+    'Add Task',
+    '',
+    appContainer
+);
+
+const clearTasksButton = createElement(
+    'input',
+    'button',
+    'clearTasks',
+    'Clear Tasks',
+    '',
+    appContainer
+);
+
+const taskList = createElement(
+    'ul',
+    '',
+    'tasksContainer',
+    '',
+    '',
+    appContainer
+);
+
+// end of HTML render
+
+window.addEventListener('load', () => {
+    let tasksArray = [];
+
+    function parseListFromLS() {
+        if (!localStorage.getItem('tasks')) {
+            return;
         }
-        taskManagerMainDiv.appendChild(thisDiv)
-        return thisDiv
+
+        tasksArray = JSON.parse(localStorage.getItem('tasks'));
     }
 
-    function createHElement(hType, messageToShow, hElStyle, nameOfDivToAppend) {
-        const thisHElement = document.createElement(hType)
-        thisHElement.textContent = messageToShow
-        thisHElement.style = hElStyle
-        nameOfDivToAppend.appendChild(thisHElement)
-        return thisHElement
+    function renderList() {
+        for (let a = 0; a < tasksArray.length; a += 1) {
+            createElement('li', '', '', '', tasksArray[a], taskList);
+        }
     }
 
-    function createInputElement(
-        typeOfInputEl,
-        styleOfInputEl,
-        nameOfDivToAppend,
-        valueForButton
-    ) {
-        const thisInputElement = document.createElement('input')
-        thisInputElement.type = typeOfInputEl
-        thisInputElement.style = styleOfInputEl
-        if (typeOfInputEl === 'button') {
-            thisInputElement.value = valueForButton
-        }
-        nameOfDivToAppend.appendChild(thisInputElement)
-        return thisInputElement
+    function saveListToLS() {
+        localStorage.setItem('tasks', JSON.stringify(tasksArray));
     }
 
-    const divForStartMessage = createDiv()
+    function clearTaskListAndLS() {
+        localStorage.clear();
+        taskList.innerHTML = '';
+    }
 
-    const divForInputAndButton = createDiv('margin:1%;')
-
-    const startMessageFirstBlock = createHElement(
-        'h2',
-        'User, this is your personal task manager',
-        'text-align: center; color: violet;',
-        divForStartMessage
-    )
-
-    const startMessageSecondBlock = createHElement(
-        'h3',
-        'Print your tasks in the field below one by one and push add button',
-        'text-align: center; color: orange;',
-        divForStartMessage
-    )
-
-    const startMessageThirdBlock = createHElement(
-        'h4',
-        'Pushing add button with empty string does nothing',
-        'text-align: center; color: red;',
-        divForStartMessage
-    )
-
-    const taskInputField = createInputElement(
-        'text',
-        'width: 300px;',
-        divForInputAndButton
-    )
-    taskInputField.textContent = ''
-    taskInputField.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') {
-            addTaskButton.click()
+    function isBlanked() {
+        if (inputField.value === '') {
+            return true;
         }
-    })
 
-    const addTaskButton = createInputElement(
-        'button',
-        'width: 100px; height: 23px; margin-left: 1%',
-        divForInputAndButton,
-        'Add New Task'
-    )
-    addTaskButton.addEventListener('click', addNewTask)
-
-    const addCLearButton = createInputElement(
-        'button',
-        'width: 80px; height: 23px; margin-left: 1%;',
-        divForInputAndButton,
-        'Clear Tasks'
-    )
-    addCLearButton.addEventListener('click', clearTaskManagerSpace)
-
-    const divForUl = createDiv('margin-top: 3%')
-
-    const mainUl = document.createElement('ul')
-    divForUl.appendChild(mainUl)
-
-    let arrayOfLiElements = []
-
-    function createAndAddNewLi(liElementTextContent) {
-        const newLi = document.createElement('li')
-        newLi.textContent = liElementTextContent
-        mainUl.appendChild(newLi)
-        taskInputField.value = ''
+        for (let a = 0; a < inputField.value; a += 1) {
+            if (inputField.value.charCodeAt(a) !== 32) {
+                return false;
+            }
+        }
+        return true;
     }
 
     function addNewTask() {
-        if (taskInputField.value === '') {
-            return undefined
+        if (isBlanked()) {
+            return;
         }
 
-        let inputContainsOnlyWhitespaces = true
+        tasksArray.push(inputField.value);
+        inputField.value = '';
+        tasksArray.sort();
+        taskList.innerHTML = '';
 
-        for (let a = 0; a < taskInputField.value.length; a += 1) {
-            if (taskInputField.value.charCodeAt(a) !== 32) {
-                inputContainsOnlyWhitespaces = false
-            }
-        }
-
-        if (inputContainsOnlyWhitespaces) {
-            taskInputField.value = ''
-            return undefined
-        }
-
-        arrayOfLiElements.push(taskInputField.value)
-        arrayOfLiElements.sort()
-        mainUl.innerHTML = ''
-
-        for (let a = 0; a < arrayOfLiElements.length; a += 1) {
-            createAndAddNewLi(arrayOfLiElements[a])
-        }
-
-        const stringifiedArrayForLocalStorage =
-            JSON.stringify(arrayOfLiElements)
-        localStorage.setItem('tasks', stringifiedArrayForLocalStorage)
-
-        return undefined
+        saveListToLS();
+        renderList();
     }
 
-    function generateLiElementsFromLocalStorage() {
-        if (!localStorage.getItem('tasks')) {
-            return undefined
+    parseListFromLS();
+
+    renderList();
+
+    addTaskButton.addEventListener('click', addNewTask);
+
+    clearTasksButton.addEventListener('click', clearTaskListAndLS);
+
+    inputField.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter') {
+            addTaskButton.click();
         }
-
-        arrayOfLiElements = JSON.parse(localStorage.getItem('tasks'))
-
-        for (let a = 0; a < arrayOfLiElements.length; a += 1) {
-            createAndAddNewLi(arrayOfLiElements[a])
-        }
-        return undefined
-    }
-
-    function clearTaskManagerSpace() {
-        localStorage.clear()
-        mainUl.innerHTML = ''
-    }
-
-    generateLiElementsFromLocalStorage()
-}
+    });
+});

@@ -9,7 +9,7 @@
     "build": "webpack",
     "lint-check": "eslint ./src/index.js",
     "pretty-check": "prettier --check ./src/index.js",
-    "pretty-fix": "prettier --write ./src/index.js"
+    "pretty-fix": "prettier --write ./src/*"
   },
   "keywords": [],
   "author": "",

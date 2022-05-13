@@ -1,12 +1,24 @@
-#container{
+#container {
     margin-left: 29%;
     margin-top: 2%;
     border: 3px solid blue;
     width: 510px;
     color: indianred;
-
+    text-align: center;
 }
 
-body {
-    color: blueviolet;
+#inputField {
+    width: 300px;
+}
+
+#addTask {
+    width: 100px;
+    height: 23px;
+    margin-left: 1%;
+}
+
+#clearTasks {
+    width: 80px;
+    height: 23px;
+    margin-left: 1%;
 }
